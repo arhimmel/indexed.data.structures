@@ -3,8 +3,19 @@ apply plugin: 'idea'
 apply plugin: 'java'
 
 apply plugin: 'application'
+apply plugin: 'SBE'
 
 mainClassName = "com.rsm.servers.Sequencer"
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.arhimmel.gradle.plugins:SBEPlugin:0.0.1'
+    }
+}
 
 repositories {
     mavenLocal()
@@ -12,17 +23,17 @@ repositories {
 }
 
 configurations {
-    generated
+    sbe
 }
 
 
 sourceSets {
-    generated {
-
+    sbe {
+        resources {}
     }
 
     main {
-        compileClasspath += sourceSets.generated.output
+//        compileClasspath += sourceSets.sbe.output
     }
 }
 
@@ -42,14 +53,6 @@ dependencies {
 //    compile 'net.openhft:TransFIX:1.0.0-SNAPSHOT'
     compile 'net.openhft:affinity:2.0.1'
     compile 'net.openhft:chronicle:2.0.3'
-
-    compile 'uk.co.real_logic:sbe:0.1-SNAPSHOT'
-
-    testCompile 'junit:junit:4.11'
-
-
-    //make compile depend on sbe
-
 }
 
 task runClient(type: JavaExec) {
@@ -58,27 +61,4 @@ task runClient(type: JavaExec) {
     main = "com.rsm.clients.Client"
 }
 
-task createSBEClasses(type: JavaExec) {
-    description = "generate SBE files"
-//    println "Run: java -Dsbe.output.dir=src/main/java -jar ../simple-binary-encoding/target/dist/sbe.jar src/main/resources/schemas/itch_4_1/*.xml"
-
-    classpath sourceSets.generated.runtimeClasspath
-    main = "uk.co.real_logic.sbe.SbeTool"
-//    args = "$sourceSets.generated.resources.srcDirs"
-    File res = file("src/main/resources")
-
-//    args = [res.absolutePath + "/schemas/itch_4_1/*.xml"]
-
-    tree = fileTree(dir: "src/main/resources").matching {
-        include "schemas/**"
-    }
-
-    args = tree.getFiles()
-
-//    jvmArgs = ["-Dsbe.output.dir=$sourceSets.generated.java.srcDirs"]
-    jvmArgs = ["-Dsbe.output.dir=src/generated/java"]
-
-    println commandLine
-
-}
 
