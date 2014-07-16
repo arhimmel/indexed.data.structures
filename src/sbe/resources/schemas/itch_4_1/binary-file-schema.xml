@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<messageSchema package="com.rsm.message.nasdaq.binaryfile"
+               id="1"
+               semanticVersion="5.2"
+               description="NASDAQ BinaryFile Schema"
+               byteOrder="bigEndian">
+    <types>
+        <composite name="messageHeader" description="Message identifiers and length of message root">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+        <composite name="groupSize" semanticType="NumInGroup">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="numInGroup" primitiveType="uint8"/>
+        </composite>
+        <composite name="binaryFileType">
+            <type name="length" primitiveType="int16"/>
+            <type name="payload" primitiveType="int8" length="0" characterEncoding="ASCII" semanticType="data"/>
+
+        </composite>
+        <composite name="varDataEncoding">
+            <type name="length" primitiveType="int16" semanticType="Length"/>
+            <type name="varData" primitiveType="int8" length="0" characterEncoding="ASCII" semanticType="message"/>
+        </composite>
+    </types>
+
+    <message name="BinaryFile" id="1">
+        <data name="message" id="1" type="varDataEncoding" semanticType="Payload"/>
+    </message>
+
+</messageSchema>

@@ -43,9 +43,7 @@ dependencies {
     compile 'junit:junit:4.11'
     compile 'it.unimi.dsi:fastutil:6.5.12'
     compile 'io.netty:netty-all:5.0.0.Alpha1'
-
     compile 'net.sf.kdgcommons:kdgcommons:1.0.14'
-
     compile 'net.openhft:lang:6.3.5'
     compile 'net.openhft:collections:3.0d'
     compile 'net.openhft:compiler:2.1'

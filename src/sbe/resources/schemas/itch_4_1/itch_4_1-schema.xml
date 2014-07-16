@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<messageSchema package="com.rsm.message.nasdaq.itch.v4_1"
+               id="2"
+               semanticVersion="5.2"
+               description="NASDAQ BinaryFile Schema"
+               byteOrder="bigEndian">
+    <types>
+        <composite name="messageHeader" description="Message identifiers and length of message root">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+        <composite name="groupSize" semanticType="NumInGroup">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="numInGroup" primitiveType="uint8"/>
+        </composite>
+        <composite name="varDataEncoding">
+            <type name="length" primitiveType="uint16"/>
+            <!--<type name="varData" primitiveType="int8"/>-->
+            <type name="varData" primitiveType="int8" length="0" characterEncoding="ASCII" semanticType="data"/>
+        </composite>
+
+
+        <type name="secondsType" primitiveType="uint32" description="Reflects the number of seconds past midnight that the Timestamp message was generated."/>
+        <type name="nanosecondsType" primitiveType="uint64" description="Reflects the number of nanoseconds since the most recent Timestamp-Seconds message that the payload message was generated."/>
+        <type name="timestamp" primitiveType="uint32" timeUnit="nanosecond" semanticType="UTCTimestamp"/>
+        <type name="seconds" primitiveType="uint32" timeUnit="seconds"/>
+        <type name="sequence" primitiveType="uint64" description="Sequence number for the event in the stream."/>
+        <type name="symbol" length="8" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="mpid" length="4" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="reserved1" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string2" length="2" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string3" length="3" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string4" length="4" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string5" length="5" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string6" length="6" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string7" length="7" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string8" length="8" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string9" length="9" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="string10" length="10" primitiveType="char" characterEncoding="ASCII"/>
+        <type name="session" length="10" primitiveType="char" characterEncoding="ASCII" description="Indicates the session to which this packet belongs."/>
+        <type name="messageCount" primitiveType="uint16" description="The count of messages contained in this packet."/>
+        <type name="messageLength" primitiveType="uint16" description="Indicates the length in bytes of the message contained in this Message Block."/>
+
+
+        <composite name="downstreamPacketHeader">
+            <type name="session" length="10" primitiveType="char" characterEncoding="ASCII" description="Indicates the session to which this packet belongs."/>
+            <type name="sourceSequence" primitiveType="uint64" description="The sequence number of the first message in the packet for the particular source."/>
+            <type name="messageCount" primitiveType="uint16" description="The count of messages contained in this packet."/>
+        </composite>
+
+        <composite name="streamHeader">
+            <type name="timestampNanos" primitiveType="uint64" timeUnit="nanosecond" semanticType="UTCTimestamp"/>
+            <type name="major" primitiveType="char" description="Major event type"/>
+            <type name="minor" primitiveType="char" description="Minor event type"/>
+            <type name="source" primitiveType="uint64" description="Source of the event"/>
+            <type name="id" primitiveType="uint32" description="Id of the source"/>
+            <type name="ref" primitiveType="uint32" description="Reference of the source"/>
+        </composite>
+
+        <!-- itch specific messages -->
+        <enum name="ITCHMessageType" encodingType="char" semanticType="char">
+            <validValue name="TIMESTAMP_SECONDS">T</validValue><!--84-->
+            <validValue name="SYSTEM_EVENT">S</validValue><!--83-->
+            <validValue name="STOCK_DIRECTORY">R</validValue><!--82-->
+            <validValue name="STOCK_TRADING_ACTION">H</validValue><!---->
+            <validValue name="REG_SHO_RESTRICTION">Y</validValue><!---->
+            <validValue name="MARKET_PARTICIPANT_POSITION">L</validValue><!---->
+            <validValue name="ADD_ORDER_NO_MPID_ATTRIBUTION">A</validValue><!---->
+            <validValue name="ADD_ORDER_WITH_MPID_ATTRIBUTION">F</validValue><!---->
+            <validValue name="ORDER_EXECUTED">E</validValue><!---->
+            <validValue name="ORDER_EXECUTED_WITH_PRICE">C</validValue><!---->
+            <validValue name="ORDER_CANCEL">X</validValue><!---->
+            <validValue name="ORDER_DELETE">D</validValue><!---->
+            <validValue name="ORDER_REPLACE">U</validValue><!---->
+            <validValue name="TRADE_MESSAGE_NON_CROSS">P</validValue><!---->
+            <validValue name="CROSS_TRADE">Q</validValue><!---->
+            <validValue name="BROKEN_TRADE">B</validValue><!---->
+            <validValue name="NOII">I</validValue><!---->
+            <validValue name="RETAIL_INTEREST">N</validValue><!---->
+        </enum>
+        <enum name="YesNoType" encodingType="char" semanticType="char">
+            <validValue name="YES">Y</validValue>
+            <validValue name="NO">N</validValue>
+        </enum>
+        <enum name="TradingStateType" encodingType="char" semanticType="char">
+            <validValue name="HALTED" description="Halted across all U.S. equity markets/SROs">H</validValue>
+            <validValue name="PAUSED" description="Paused across all U.S. equity markets/SROs (NASDAQ-listed securities only)">P</validValue>
+            <validValue name="QUOTATION" description="Quotation only period for cross-SRO halt or pause">Q</validValue>
+            <validValue name="TRADING" description="Trading on NASDAQ">T</validValue>
+        </enum>
+        <enum name="RegSHOShortSalePriceTestRestriction" encodingType="char" semanticType="char">
+            <validValue name="NO_PRICE_TEST_IN_PLACE" description="No price test in place">0</validValue>
+            <validValue name="IN_EFFECT_DUE_TO_AN_INTRADAY_PRICE_DROP_IN_SECURITY" description="Reg SHO Short Sale Price Test Restriction in effect due to an intra-day price drop in security">1</validValue>
+            <validValue name="QUOTATION" description="">2</validValue>
+            <validValue name="TEST_RESTRICTION_REMAINS_IN_EFFECT" description="Reg SHO Short Sale Price Test Restriction remains in effect">T</validValue>
+        </enum>
+        <enum name="MarketMakerMode" encodingType="char" semanticType="char" description="Indicates the quoting participant’s registration status in relation to SEC Rules 101 and 104 of Regulation M">
+            <validValue name="NORMAL">N</validValue>
+            <validValue name="PASSIVE">P</validValue>
+            <validValue name="SYNDICATE">S</validValue>
+            <validValue name="PRE_SYNDICATE">R</validValue>
+            <validValue name="PENALTY">L</validValue>
+        </enum>
+        <enum name="MarketParticipantState" encodingType="char" semanticType="char" description="Indicates the market participant’s current registration status in the issue">
+            <validValue name="ACTIVE">A</validValue>
+            <validValue name="EXCUSED_WITHDRAWN">E</validValue>
+            <validValue name="WITHDRAWN">W</validValue>
+            <validValue name="SUSPENDED">S</validValue>
+            <validValue name="DELETED">D</validValue>
+        </enum>
+    </types>
+
+    <message name="ReplayRequest" id="5000" description="Mold replay request packet">
+        <field name="session" id="1" length="10" type="char" characterEncoding="ASCII" description="Indicates the session to which this packet belongs."/>
+        <field name="sequenceNumber" id="2" type="uint64" description="First requested sequence number."/>
+        <field name="messageCount" id="3" type="uint16" description="The count of messages contained in this packet."/>
+    </message>
+
+    <message name="MoldUDP64Packet" id="3000" description="MoldUDP64 Packet">
+        <field name="downstreamPacketHeader" id="3001" type="downstreamPacketHeader"/>
+    </message>
+
+    <message name="EventMoldUDP64Packet" id="4000" description="MoldUDP64 Packet">
+        <field name="eventSequence" id="4001" type="sequence" description="Source Sequence"/>
+        <field name="downstreamPacketHeader" id="3001" type="downstreamPacketHeader"/>
+    </message>
+
+    <!-- TimestampSeconds -->
+    <message name="TimestampSecondsMessage" id="84" description="TimestampSeconds"><!-- T -->
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="seconds" id="2" type="seconds" timeUnit="seconds"/>
+    </message>
+    <message name="TimestampSecondsCommand" id="1084" description="TimestampSeconds Command">
+        <field name="streamHeader" id="1" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="seconds" id="2" type="seconds" timeUnit="seconds"/>
+    </message>
+    <message name="TimestampSecondsEvent" id="2084" description="TimestampSeconds Event">
+        <field name="sequence" id="1" type="sequence"/>
+        <field name="streamHeader" id="2" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="seconds" id="2" type="seconds" timeUnit="seconds"/>
+    </message>
+
+    <!-- SystemEvent -->
+    <message name="SystemEventMessage" id="83" description="SystemEvent"><!-- S -->
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestamp" id="3" type="timestamp" timeUnit="timestamp"/>
+        <field name="eventCode" id="4" type="char"/>
+    </message>
+    <message name="SystemEventCommand" id="1083" description="TimestampSeconds Command">
+        <field name="streamHeader" id="1" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestamp" id="3" type="timestamp" timeUnit="timestamp"/>
+        <field name="eventCode" id="4" type="char"/>
+    </message>
+    <message name="SystemEventEvent" id="2083" description="TimestampSeconds Event">
+        <field name="sequence" id="1" type="sequence"/>
+        <field name="streamHeader" id="2" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestamp" id="3" type="timestamp" timeUnit="timestamp"/>
+        <field name="eventCode" id="4" type="char"/>
+    </message>
+
+    <!-- StockDirectory -->
+    <message name="StockDirectoryMessage" id="82" description="StockDirectory"><!-- R -->
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="nanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="marketCategory" id="7" type="char"/>
+        <field name="financialStatusIndicator" id="8" type="char"/>
+        <field name="roundLotSize" id="9" type="uint32"/>
+        <field name="roundLotsOnly" id="10" type="YesNoType"/>
+    </message>
+    <message name="StockDirectoryCommand" id="1082" description="StockDirectory Command">
+        <field name="streamHeader" id="1" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="nanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="marketCategory" id="7" type="char"/>
+        <field name="financialStatusIndicator" id="8" type="char"/>
+        <field name="roundLotSize" id="9" type="uint32"/>
+        <field name="roundLotsOnly" id="10" type="YesNoType"/>
+    </message>
+    <message name="StockDirectoryEvent" id="2082" description="StockDirectory Event">
+        <field name="sequence" id="1" type="sequence"/>
+        <field name="streamHeader" id="2" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="nanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="marketCategory" id="7" type="char"/>
+        <field name="financialStatusIndicator" id="8" type="char"/>
+        <field name="roundLotSize" id="9" type="uint32"/>
+        <field name="roundLotsOnly" id="10" type="YesNoType"/>
+    </message>
+
+    <!-- StockTradingAction -->
+    <message name="StockTradingActionMessage" id="72" description="StockTradingAction"><!-- H -->
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="tradingState" id="11" type="TradingStateType"/>
+        <field name="reserved" id="12" type="reserved1"/>
+        <field name="reason" id="13" type="string4"/>
+    </message>
+    <message name="StockTradingActionCommand" id="1072" description="StockTradingAction Command">
+        <field name="streamHeader" id="1" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="nanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="tradingState" id="11" type="TradingStateType"/>
+        <field name="reserved" id="12" type="reserved1"/>
+        <field name="reason" id="13" type="string4"/>
+    </message>
+    <message name="StockTradingActionEvent" id="2072" description="StockTradingAction Event">
+        <field name="sequence" id="1" type="sequence"/>
+        <field name="streamHeader" id="2" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="nanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="tradingState" id="11" type="TradingStateType"/>
+        <field name="reserved" id="12" type="reserved1"/>
+        <field name="reason" id="13" type="string4"/>
+    </message>
+
+
+    <!-- RegSHORestriction -->
+    <message name="RegSHORestrictionMessage" id="89" description="RegSHORestriction"><!-- Y -->
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="regSHOAction" id="14" type="RegSHOShortSalePriceTestRestriction"/>
+    </message>
+    <message name="RegSHORestrictionCommand" id="1089" description="RegSHORestriction Command">
+        <field name="streamHeader" id="1" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="regSHOAction" id="14" type="RegSHOShortSalePriceTestRestriction"/>
+    </message>
+    <message name="RegSHORestrictionEvent" id="2089" description="RegSHORestriction Event">
+        <field name="sequence" id="1" type="sequence"/>
+        <field name="streamHeader" id="2" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="regSHOAction" id="14" type="RegSHOShortSalePriceTestRestriction"/>
+    </message>
+
+    <!-- MarketParticipantPosition -->
+    <message name="MarketParticipantPositionMessage" id="76" description="MarketParticipantPosition"><!-- L -->
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="mpid" id="15" type="mpid"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="primaryMarketMaker" id="16" type="YesNoType"/>
+        <field name="marketMakerMode" id="17" type="MarketMakerMode"/>
+        <field name="marketParticipantState" id="18" type="MarketParticipantState"/>
+    </message>
+    <message name="MarketParticipantPositionCommand" id="1076" description="MarketParticipantPosition Command">
+        <field name="streamHeader" id="1" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="mpid" id="15" type="mpid"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="primaryMarketMaker" id="16" type="YesNoType"/>
+        <field name="marketMakerMode" id="17" type="MarketMakerMode"/>
+        <field name="marketParticipantState" id="18" type="MarketParticipantState"/>
+    </message>
+    <message name="MarketParticipantPositionEvent" id="2076" description="MarketParticipantPosition Event">
+        <field name="sequence" id="1" type="sequence"/>
+        <field name="streamHeader" id="2" type="streamHeader"/>
+        <!-- payload -->
+        <field name="messageType" id="1" type="ITCHMessageType"/>
+        <field name="timestampNanoseconds" id="5" type="timestamp" timeUnit="timestamp"/>
+        <field name="mpid" id="15" type="mpid"/>
+        <field name="stock" id="6" type="symbol"/>
+        <field name="primaryMarketMaker" id="16" type="YesNoType"/>
+        <field name="marketMakerMode" id="17" type="MarketMakerMode"/>
+        <field name="marketParticipantState" id="18" type="MarketParticipantState"/>
+    </message>
+
+
+</messageSchema>
